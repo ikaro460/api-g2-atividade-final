@@ -1,6 +1,7 @@
 package com.residencia.ecommerce.entities;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -42,6 +44,9 @@ public class Cliente {
 	@OneToOne
 	@JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco", unique = true) 
 	private Endereco endereco;
+	
+	@OneToMany(mappedBy="cliente")
+	private List<Pedido> pedidos;
 
 	public Long getIdCliente() {
 		return idCliente;
@@ -97,6 +102,14 @@ public class Cliente {
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+	public List<Pedido> getPedidos() {
+		return pedidos;
+	}
+
+	public void setPedidos(List<Pedido> pedidos) {
+		this.pedidos = pedidos;
 	}
 	
 	
