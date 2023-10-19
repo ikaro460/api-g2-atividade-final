@@ -8,9 +8,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "codigoInstrutor", scope=Endereco.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "idEndereco", scope=Endereco.class)
 @Entity
 @Table(name = "endereco")
 public class Endereco {
@@ -41,8 +42,8 @@ public class Endereco {
 	@Column(name = "uf")
 	private String uf;
 
-//	@OneToOne(mappedBy = "endereco")
-//	private Cliente cliente;
+	@OneToOne(mappedBy = "endereco")
+	private Cliente cliente;
 	
 	public Long getIdEndereco() {
 		return idEndereco;
@@ -106,6 +107,14 @@ public class Endereco {
 
 	public void setUf(String uf) {
 		this.uf = uf;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 	
 	
