@@ -1,6 +1,7 @@
 package com.residencia.ecommerce.entities;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /*
@@ -49,7 +51,12 @@ public class Produto {
 	private String imagem;
 
 	/* RELACIONAMENTOS */
-
+	
+	// PRODUTO > ITEM_PEDIDO
+	
+	@OneToMany(mappedBy = "produto")
+	private List<ItemPedido> itemPedidos;
+	
 	// PRODUTO > CATEGORIA
 	@ManyToOne
 	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
@@ -118,5 +125,15 @@ public class Produto {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
+
+	public List<ItemPedido> getItemPedidos() {
+		return itemPedidos;
+	}
+
+	public void setItemPedidos(List<ItemPedido> itemPedidos) {
+		this.itemPedidos = itemPedidos;
+	}
+	
+	
 
 }
