@@ -50,7 +50,7 @@ public class CategoriaController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<String> deletarEditor(@RequestBody Categoria categoria) {
+	public ResponseEntity<String> deletarCategoria(@RequestBody Categoria categoria) {
 		if (categoriaService.deletarCategoria(categoria)) {
 			return new ResponseEntity<>("Deletado com sucesso", HttpStatus.OK);
 		} else {
