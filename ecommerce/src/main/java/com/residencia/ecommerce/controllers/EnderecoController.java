@@ -18,7 +18,7 @@ import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.services.EnderecoService;
 
 	@RestController
-	@RequestMapping("/endereços")
+	@RequestMapping("/enderecos")
 	
 	public class EnderecoController {
 

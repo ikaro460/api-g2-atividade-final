@@ -18,7 +18,7 @@ import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.services.ItemPedidoService;
 
 @RestController
-@RequestMapping("/itemitemPedidos")
+@RequestMapping("/itens")
 public class ItemPedidoController {
 	
 	@Autowired
