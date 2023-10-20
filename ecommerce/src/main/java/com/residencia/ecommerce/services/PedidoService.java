@@ -3,14 +3,16 @@ package com.residencia.ecommerce.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.residencia.ecommerce.dto.ItemPedidoDTO;
 import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.entities.Pedido;
+import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.repositories.PedidoRepository;
+import com.residencia.ecommerce.repositories.ProdutoRepository;
 
 @Service
 public class PedidoService {
@@ -18,7 +20,8 @@ public class PedidoService {
 	@Autowired
 	PedidoRepository pedidoRepo;
 	
-	private ModelMapper modelMapper = new ModelMapper();
+	@Autowired
+	ProdutoRepository produtoRepo;
 
 	public List<Pedido> listarPedidos() {
 		return pedidoRepo.findAll();
@@ -55,30 +58,41 @@ public class PedidoService {
 			return true;
 		return false;
 	}
-	
-	private RelatorioPedidoDTO entityToDto(Pedido pedido) {
-		RelatorioPedidoDTO relatorioPedidoDTO = modelMapper.map(pedido, RelatorioPedidoDTO.class);
-		
-		List<ItemPedido> itensPedidos = new ArrayList<>();
-		
-		for(ItemPedido itemPedido : pedido.getItemPedidos()) {
-			itensPedidos.add(itemPedido);
+
+	private RelatorioPedidoDTO convertPedidoToDTO(Pedido pedido) {
+
+		// CRIA LISTA RELAÇÃO DE ITENS DO PEDIDO VAZIA
+		List<ItemPedidoDTO> itensPedidosDTO = new ArrayList<>();
+
+		// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
+		for (ItemPedido itemPedido : pedido.getItemPedidos()) {
+			
+			Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
+			
+			
+			// CRIA DTO ITEM PEDIDO
+			ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
+					itemPedido.getProduto().getIdProduto(),
+					produto.getNome(),
+					itemPedido.getPrecoVenda(),
+					itemPedido.getQuantidade(),
+					itemPedido.getValorBruto(),
+					itemPedido.getPercentualDesconto(), 
+					itemPedido.getValorLiquido());
+			
+			
+
+			// ADICIONA DTO A RELAÇÃO DE ITENS
+			itensPedidosDTO.add(itemPedidoDTO);
 		}
-	
-		relatorioPedidoDTO.setDataPedido(pedido.getDataPedido());
-		relatorioPedidoDTO.setIdPedido(pedido.getIdPedido());
-		relatorioPedidoDTO.setItemPedidos(itensPedidos);
-		return relatorioPedidoDTO;
+
+		// RETORNA UM NOVO RELATORIO CONSTRUIDO A PARTIR DOS DADOS TRATADOS
+		return new RelatorioPedidoDTO(pedido.getIdPedido(), pedido.getDataPedido(), pedido.getValorTotal(),
+				itensPedidosDTO);
 	}
-	
-	private Pedido DtoToEntity(RelatorioPedidoDTO relatorioPedidoDTO) {
-		Pedido pedido = modelMapper.map(relatorioPedidoDTO, Pedido.class);
-		return pedido;
-	}
-	
-	public RelatorioPedidoDTO criarRelatorioDTO(RelatorioPedidoDTO pedidoDTO) {
-		Pedido pedido = DtoToEntity(pedidoDTO);
-		return entityToDto(pedidoRepo.save(pedido));
+
+	public RelatorioPedidoDTO gerarRelatorioDTO(Pedido pedido) {
+		return convertPedidoToDTO(pedido);
 	}
 
 }

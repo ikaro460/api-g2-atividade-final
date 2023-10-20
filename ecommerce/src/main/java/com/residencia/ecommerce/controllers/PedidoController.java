@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.services.PedidoService;
 
@@ -37,6 +38,12 @@ public class PedidoController {
 		} else {
 			return new ResponseEntity<>(pedido, HttpStatus.OK);
 		}	
+	}
+	
+	@GetMapping("/relatorio/{id}")
+	public ResponseEntity<RelatorioPedidoDTO> gerarRelatorioPedidoDTO(@PathVariable Long id) {
+		Pedido pedido = pedidoService.getPedidoPorId(id);
+		return new ResponseEntity<>(pedidoService.gerarRelatorioDTO(pedido), HttpStatus.OK);
 	}
 	
 	@PostMapping
