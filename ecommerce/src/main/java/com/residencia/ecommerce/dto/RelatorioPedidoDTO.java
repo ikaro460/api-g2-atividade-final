@@ -56,6 +56,12 @@ public class RelatorioPedidoDTO {
 	public void setItemPedidos(List<ItemPedidoDTO> itemPedidos) {
 		this.itemPedidos = itemPedidos;
 	}
+
+	@Override
+	public String toString() {
+		return "RelatorioPedidoDTO [idPedido=" + idPedido + ", dataPedido=" + dataPedido + ", valorTotal=" + valorTotal
+				+ ", itemPedidos=" + itemPedidos + "]";
+	}
 	
 	
 	

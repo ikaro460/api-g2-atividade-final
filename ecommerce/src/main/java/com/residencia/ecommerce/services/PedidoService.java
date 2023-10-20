@@ -22,6 +22,9 @@ public class PedidoService {
 	
 	@Autowired
 	ProdutoRepository produtoRepo;
+	
+	@Autowired
+	EmailService emailService;
 
 	public List<Pedido> listarPedidos() {
 		return pedidoRepo.findAll();
@@ -32,7 +35,10 @@ public class PedidoService {
 	}
 
 	public Pedido salvarPedido(Pedido pedido) {
-		return pedidoRepo.save(pedido);
+		Pedido pedidoSalvo = pedidoRepo.save(pedido);
+		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+		emailService.enviarEmail("Teste@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+		return pedidoSalvo;
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
@@ -63,7 +69,7 @@ public class PedidoService {
 
 		// CRIA LISTA RELAÇÃO DE ITENS DO PEDIDO VAZIA
 		List<ItemPedidoDTO> itensPedidosDTO = new ArrayList<>();
-
+		
 		// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
 		for (ItemPedido itemPedido : pedido.getItemPedidos()) {
 			

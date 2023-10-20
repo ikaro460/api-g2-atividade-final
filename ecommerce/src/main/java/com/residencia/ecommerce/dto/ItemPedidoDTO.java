@@ -100,4 +100,13 @@ public class ItemPedidoDTO {
 		this.valorLiquido = valorLiquido;
 	}
 
+	@Override
+	public String toString() {
+		return "ItemPedidoDTO [idItemPedido=" + idItemPedido + ", nomeProduto=" + nomeProduto + ", precoVenda="
+				+ precoVenda + ", quantidade=" + quantidade + ", valorBruto=" + valorBruto + ", percentualDesconto="
+				+ percentualDesconto + ", valorLiquido=" + valorLiquido + "]";
+	}
+	
+	
+
 }
