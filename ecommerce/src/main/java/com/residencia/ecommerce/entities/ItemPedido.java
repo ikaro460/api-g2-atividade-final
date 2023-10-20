@@ -46,6 +46,26 @@ public class ItemPedido {
 	@ManyToOne
 	@JoinColumn(name = "id_produto", referencedColumnName = "id_produto")
 	private Produto produto;
+	
+	
+	public ItemPedido() {
+		super();
+	}
+		
+
+	public ItemPedido(Long idItemPedido, Integer quantidade, BigDecimal precoVenda, BigDecimal percentualDesconto,
+			BigDecimal valorBruto, BigDecimal valorLiquido, Pedido pedido, Produto produto) {
+		super();
+		this.idItemPedido = idItemPedido;
+		this.quantidade = quantidade;
+		this.precoVenda = precoVenda;
+		this.percentualDesconto = percentualDesconto;
+		this.valorBruto = valorBruto;
+		this.valorLiquido = valorLiquido;
+		this.pedido = pedido;
+		this.produto = produto;
+	}
+	
 
 	public Long getIdItemPedido() {
 		return idItemPedido;
@@ -111,6 +131,6 @@ public class ItemPedido {
 		this.produto = produto;
 	}
 	
-	
+
 	
 }
