@@ -26,13 +26,13 @@ public class Cliente {
 	@Column(name = "id_cliente")
 	private Long idCliente;
 	
-	@Column(name = "email")
+	@Column(name = "email", unique = true, nullable = false)
 	private String email;
 	
 	@Column(name = "nome_completo")
 	private String nomeCompleto;
 	
-	@Column(name = "cpf")
+	@Column(name = "cpf", unique = true, nullable = false)
 	private String cpf;
 	
 	@Column(name = "telefone")
