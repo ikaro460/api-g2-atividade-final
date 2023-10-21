@@ -29,10 +29,10 @@ public class Categoria {
 	@Column(name = "id_categoria")
 	private Long idCategoria;
 
-	@Column(name = "nome")
+	@Column(name = "nome", unique = true, nullable = false)
 	private String nome;
 
-	@Column(name = "descricao")
+	@Column(name = "descricao", nullable = false)
 	private String descricao;
 
 	/* RELACIONAMENTOS */

@@ -24,13 +24,13 @@ public class ItemPedido {
 	@Column(name = "id_item_pedido")
 	private Long idItemPedido;
 	
-	@Column(name = "quantidade")
+	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
 	
-	@Column(name = "preco_venda")
+	@Column(name = "preco_venda", nullable = false)
 	private BigDecimal precoVenda;
 	
-	@Column(name = "percentual_desconto")
+	@Column(name = "percentual_desconto", nullable = false)
 	private BigDecimal percentualDesconto;
 	
 	@Column(name = "valor_bruto")

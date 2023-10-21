@@ -40,7 +40,7 @@ public class Pedido {
 	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "valor_total")
+	@Column(name = "valor_total", nullable = false)
 	private BigDecimal valorTotal;
 	
 	@OneToMany(mappedBy = "pedido")
