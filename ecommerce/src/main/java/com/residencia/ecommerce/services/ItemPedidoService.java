@@ -30,6 +30,9 @@ public class ItemPedidoService {
 
 	@Autowired
 	EmailService emailService;
+	
+	@Autowired
+	PedidoService pedidoService;
 
 	public List<ItemPedido> listarItemPedidos() {
 		return itemPedidoRepo.findAll();
@@ -49,10 +52,13 @@ public class ItemPedidoService {
 		BigDecimal obterValorLiquido = gerarValorLiquido(itemPedido.getValorBruto(),
 				itemPedido.getPercentualDesconto());
 		itemPedido.setValorLiquido(obterValorLiquido);
+		
 
 		// SALVA O ITEM
 		ItemPedido itemSalvo = itemPedidoRepo.save(itemPedido);
-
+		
+		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());
+		
 		// GERA RELATORIO
 		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(
 				pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());

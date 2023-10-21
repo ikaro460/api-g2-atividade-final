@@ -1,5 +1,6 @@
 package com.residencia.ecommerce.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class PedidoService {
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
-		
+
 		// ATUALIZA PEDIDO
 		Pedido pedidoSalvo = pedidoRepo.save(pedido);
 
@@ -117,4 +118,18 @@ public class PedidoService {
 		return convertPedidoToDTO(pedido);
 	}
 
+	public void gerarValorTotal(Pedido pedido) {
+		BigDecimal valorTotal = new BigDecimal(0);
+		if (pedido.getItemPedidos() != null) {
+			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
+				valorTotal = valorTotal.add(itemPedido.getValorLiquido());
+			}
+			System.out.println("\n\n\n\n" + valorTotal + "\n\n\n\n\n\n");
+		}
+		else{
+			System.out.println("\n\n\n\nitem pedido e nulo\n\n\n\n\n");
+		}
+		pedido.setValorTotal(valorTotal);
+		pedidoRepo.save(pedido);
+	}
 }
