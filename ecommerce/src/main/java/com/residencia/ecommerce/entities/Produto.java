@@ -49,7 +49,7 @@ public class Produto {
 	private Integer valorUnitario;
 
 	@Lob
-	@Column(name = "imagem", columnDefinition = "OID")
+	@Column(name = "imagem" /*columnDefinition = "bytea"*/)
 	private byte[] imagem;
 
 	/* RELACIONAMENTOS */
