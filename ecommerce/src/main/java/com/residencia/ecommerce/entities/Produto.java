@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -47,8 +48,9 @@ public class Produto {
 	@Column(name = "valor_unitario", nullable = false)
 	private Integer valorUnitario;
 
-	@Column(name = "imagem")
-	private String imagem;
+	@Lob
+	@Column(name = "imagem", columnDefinition = "OID")
+	private byte[] imagem;
 
 	/* RELACIONAMENTOS */
 	
@@ -110,11 +112,11 @@ public class Produto {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public String getImagem() {
+	public byte[] getImagem() {
 		return imagem;
 	}
 
-	public void setImagem(String imagem) {
+	public void setImagem(byte[] imagem) {
 		this.imagem = imagem;
 	}
 
