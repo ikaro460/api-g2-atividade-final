@@ -22,15 +22,18 @@ public class EnderecoService {
 		RestTemplate restTemplate = new RestTemplate();
 		String viaCepUrl = VIA_CEP_URL + endereco.getCep() + "/json";
 		ViaCepResponse viaCepResponse = restTemplate.getForObject(viaCepUrl, ViaCepResponse.class);
-
-		endereco.setCep(viaCepResponse.getCep());
-		endereco.setRua(viaCepResponse.getLogradouro());
-		endereco.setBairro(viaCepResponse.getBairro());
-		endereco.setCidade(viaCepResponse.getLocalidade());
-		endereco.setNumero(viaCepResponse.getNumero());
-		endereco.setComplemento(viaCepResponse.getComplemento());
-		endereco.setUf(viaCepResponse.getUf());
-
+		
+		try {
+			endereco.setCep(viaCepResponse.getCep());
+			endereco.setRua(viaCepResponse.getLogradouro());
+			endereco.setBairro(viaCepResponse.getBairro());
+			endereco.setCidade(viaCepResponse.getLocalidade());
+			endereco.setComplemento(viaCepResponse.getComplemento());
+			endereco.setUf(viaCepResponse.getUf());
+		} catch(NullPointerException e) {
+			System.out.println("O cep deve ser válido. Mensagem: " + e.getMessage());
+		}
+		
 		return endereco;
 	}
 

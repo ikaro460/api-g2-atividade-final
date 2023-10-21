@@ -18,7 +18,6 @@ import jakarta.persistence.Table;
 */
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idCategoria", scope = Categoria.class)
-
 @Entity
 @Table(name = "categoria")
 
@@ -29,7 +28,7 @@ public class Categoria {
 	@Column(name = "id_categoria")
 	private Long idCategoria;
 
-	@Column(name = "nome", unique = true, nullable = false)
+	@Column(name = "nome", nullable = false)
 	private String nome;
 
 	@Column(name = "descricao", nullable = false)

@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 */
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idProduto", scope = Produto.class)
-
 @Entity
 @Table(name = "produto")
 
@@ -49,7 +48,7 @@ public class Produto {
 	private Integer valorUnitario;
 
 	@Lob
-	@Column(name = "imagem" /*columnDefinition = "bytea"*/)
+	@Column(name = "imagem")
 	private byte[] imagem;
 
 	/* RELACIONAMENTOS */

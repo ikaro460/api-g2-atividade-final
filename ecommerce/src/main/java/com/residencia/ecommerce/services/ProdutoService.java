@@ -31,20 +31,20 @@ public class ProdutoService {
 	}
 	
 	public Produto salvarProduto(String strProduto, MultipartFile arqImg) throws IOException {
-		Produto editora = new Produto();
+		Produto produto = new Produto();
 		
 		try {
 			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			 
 			//editora.setImagem(arqImg.getBytes());
-			editora = objMapper.readValue(strProduto, Produto.class);
+			produto = objMapper.readValue(strProduto, Produto.class);
 		} catch(IOException e) {
-			System.out.println("Erro ao converter a string Editora: " + e.toString());
+			System.out.println("Erro ao converter a string produto: " + e.toString());
 		}
-		editora.setImagem(arqImg.getBytes());
+		produto.setImagem(arqImg.getBytes());
 		// fazer o @Lob com um array de bytes
 		
-		return produtoRepo.save(editora);
+		return produtoRepo.save(produto);
 	}
 
 	public Produto atualizarProduto(Produto produto) {

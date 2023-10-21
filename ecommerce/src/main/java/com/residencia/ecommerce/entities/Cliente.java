@@ -42,7 +42,7 @@ public class Cliente {
 	private Date dataNascimento;
 	
 	@OneToOne
-	@JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco", unique = true) 
+	@JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco", unique = true, nullable = false) 
 	private Endereco endereco;
 	
 	@OneToMany(mappedBy="cliente")

@@ -7,12 +7,10 @@ public class ViaCepResponse {
 	 * de desconto e valor líquido.
 	 */
 
-	private Long idEndereco;
 	private String cep;
 	private String logradouro;
 	private String bairro;
 	private String localidade;
-	private Integer numero;
 	private String complemento;
 	private String uf;
 
@@ -21,28 +19,17 @@ public class ViaCepResponse {
 	public ViaCepResponse() {
 	}
 
-	public ViaCepResponse(Long idEndereco, String cep, String logradouro, String bairro, String localidade,
-			Integer numero, String complemento, String uf) {
-		super();
-		this.idEndereco = idEndereco;
+	public ViaCepResponse(String cep, String logradouro, String bairro, String localidade,
+			String complemento, String uf) {
 		this.cep = cep;
 		this.logradouro = logradouro;
 		this.bairro = bairro;
 		this.localidade = localidade;
-		this.numero = numero;
 		this.complemento = complemento;
 		this.uf = uf;
 	}
 	
 	// GETTERS E SETTERS
-
-	public Long getIdEndereco() {
-		return idEndereco;
-	}
-
-	public void setIdEndereco(Long idEndereco) {
-		this.idEndereco = idEndereco;
-	}
 
 	public String getCep() {
 		return cep;
@@ -75,15 +62,7 @@ public class ViaCepResponse {
 	public void setLocalidade(String localidade) {
 		this.localidade = localidade;
 	}
-
-	public Integer getNumero() {
-		return numero;
-	}
-
-	public void setNumero(Integer numero) {
-		this.numero = numero;
-	}
-
+	
 	public String getComplemento() {
 		return complemento;
 	}

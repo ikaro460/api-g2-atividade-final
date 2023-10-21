@@ -40,14 +40,14 @@ public class Pedido {
 	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "valor_total", nullable = false)
+	@Column(name = "valor_total")
 	private BigDecimal valorTotal;
 	
 	@OneToMany(mappedBy = "pedido")
 	private List<ItemPedido> itemPedidos;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
+	@JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente", nullable = false)
 	private Cliente cliente;
 
 	// construtores

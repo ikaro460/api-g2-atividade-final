@@ -21,7 +21,7 @@ public class Endereco {
 	@Column(name = "id_endereco")
 	private Long idEndereco;
 	
-	@Column(name = "cep")
+	@Column(name = "cep", nullable = false)
 	private String cep;
 	
 	@Column(name = "rua")
