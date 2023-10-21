@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
-import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.services.ItemPedidoService;
 
 @RestController
