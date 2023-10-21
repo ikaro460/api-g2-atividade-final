@@ -1,6 +1,7 @@
 package com.residencia.ecommerce.entities;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,11 +31,11 @@ public class Pedido {
 	@Column(name = "data_pedido")
 	private Date dataPedido;
 	
-	@Column(name = "data_entrega")
-	private Date dataEntrega;
-	
 	@Column(name = "data_envio")
 	private Date dataEnvio;
+	
+	@Column(name = "data_entrega")
+	private Date dataEntrega;
 	
 	@Column(name = "status")
 	private String status;
@@ -46,9 +47,29 @@ public class Pedido {
 	private List<ItemPedido> itemPedidos;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
+	@JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente", nullable = false)
 	private Cliente cliente;
 
+	// construtores
+	
+	public Pedido() {
+		//data do pedido é gerada automaticamente na hora do computador
+		dataPedido = new Date();
+		
+		//data de envio é calculada dois dias depois do pedido
+		Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(dataPedido);
+	    calendar.add(Calendar.DAY_OF_MONTH, 2);
+	    dataEnvio = calendar.getTime();
+	    
+	    //data de entrega é calculada tres dias depois do envio
+	    Calendar calendar2 = Calendar.getInstance();
+	    calendar2.setTime(dataEnvio);
+	    calendar2.add(Calendar.DAY_OF_MONTH, 3);
+	    dataEntrega = calendar2.getTime();
+	    
+	}
+	
 	// gets e sets
 	
 	public Long getIdPedido() {
@@ -114,7 +135,8 @@ public class Pedido {
 	public void setItemPedidos(List<ItemPedido> itemPedidos) {
 		this.itemPedidos = itemPedidos;
 	}
-	
+
+
 	
 
 }

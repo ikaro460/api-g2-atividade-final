@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.residencia.ecommerce.dto.ViaCepResponse;
 import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.repositories.EnderecoRepository;
 
@@ -14,6 +16,27 @@ public class EnderecoService {
 	@Autowired
 	EnderecoRepository enderecoRepo;
 
+	private static final String VIA_CEP_URL = "https://viacep.com.br/ws/";
+
+	public Endereco getEnderecoByCep(Endereco endereco) {
+		RestTemplate restTemplate = new RestTemplate();
+		String viaCepUrl = VIA_CEP_URL + endereco.getCep() + "/json";
+		ViaCepResponse viaCepResponse = restTemplate.getForObject(viaCepUrl, ViaCepResponse.class);
+		
+		try {
+			endereco.setCep(viaCepResponse.getCep());
+			endereco.setRua(viaCepResponse.getLogradouro());
+			endereco.setBairro(viaCepResponse.getBairro());
+			endereco.setCidade(viaCepResponse.getLocalidade());
+			endereco.setComplemento(viaCepResponse.getComplemento());
+			endereco.setUf(viaCepResponse.getUf());
+		} catch(NullPointerException e) {
+			System.out.println("O cep deve ser válido. Mensagem: " + e.getMessage());
+		}
+		
+		return endereco;
+	}
+
 	public List<Endereco> listarEnderecos() {
 		return enderecoRepo.findAll();
 	}
@@ -22,7 +45,8 @@ public class EnderecoService {
 		return enderecoRepo.findById(id).orElse(null);
 	}
 
-	public Endereco salvarEndereco(Endereco endereco) {
+	public Endereco salvarEndereco(Endereco enderecoCep) {
+		Endereco endereco = getEnderecoByCep(enderecoCep);
 		return enderecoRepo.save(endereco);
 	}
 

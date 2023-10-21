@@ -25,6 +25,7 @@ public class EmailService {
 		
 		try {
 			emailSender.send(mailMessage);
+			System.out.println("email enviado");
 		}catch(Exception ex) {
 			System.out.println("Ocorreu um erro ao tentar enviar o e-mail: " 
 					+ ex.getMessage());

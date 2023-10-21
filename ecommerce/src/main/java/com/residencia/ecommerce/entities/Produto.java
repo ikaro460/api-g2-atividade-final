@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -21,7 +22,6 @@ import jakarta.persistence.Table;
 */
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idProduto", scope = Produto.class)
-
 @Entity
 @Table(name = "produto")
 
@@ -35,20 +35,21 @@ public class Produto {
 	@Column(name = "nome")
 	private String nome;
 
-	@Column(name = "descricao")
+	@Column(name = "descricao", unique = true, nullable = false)
 	private String descricao;
 
-	@Column(name = "qtd_estoque")
+	@Column(name = "qtd_estoque", nullable = false)
 	private Integer qtdEstoque;
 
 	@Column(name = "data_cadastro")
 	private Date dataCadastro;
 
-	@Column(name = "valor_unitario")
+	@Column(name = "valor_unitario", nullable = false)
 	private Integer valorUnitario;
 
+	@Lob
 	@Column(name = "imagem")
-	private String imagem;
+	private byte[] imagem;
 
 	/* RELACIONAMENTOS */
 	
@@ -59,7 +60,7 @@ public class Produto {
 	
 	// PRODUTO > CATEGORIA
 	@ManyToOne
-	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
+	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)
 	private Categoria categoria;
 
 	public Long getIdProduto() {
@@ -110,11 +111,11 @@ public class Produto {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public String getImagem() {
+	public byte[] getImagem() {
 		return imagem;
 	}
 
-	public void setImagem(String imagem) {
+	public void setImagem(byte[] imagem) {
 		this.imagem = imagem;
 	}
 

@@ -26,13 +26,13 @@ public class Cliente {
 	@Column(name = "id_cliente")
 	private Long idCliente;
 	
-	@Column(name = "email")
+	@Column(name = "email", unique = true, nullable = false)
 	private String email;
 	
 	@Column(name = "nome_completo")
 	private String nomeCompleto;
 	
-	@Column(name = "cpf")
+	@Column(name = "cpf", unique = true, nullable = false)
 	private String cpf;
 	
 	@Column(name = "telefone")
@@ -42,7 +42,7 @@ public class Cliente {
 	private Date dataNascimento;
 	
 	@OneToOne
-	@JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco", unique = true) 
+	@JoinColumn(name = "id_endereco", referencedColumnName = "id_endereco", unique = true, nullable = false) 
 	private Endereco endereco;
 	
 	@OneToMany(mappedBy="cliente")
