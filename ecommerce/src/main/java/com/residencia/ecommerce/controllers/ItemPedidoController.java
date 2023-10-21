@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
+import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.services.ItemPedidoService;
 
 @RestController
@@ -55,6 +57,12 @@ public class ItemPedidoController {
 			return new ResponseEntity<>("Deletado com sucesso.", HttpStatus.OK);
 			else
 				return new ResponseEntity<>("Não foi possível deletar.", HttpStatus.BAD_REQUEST);
+	}
+	
+	@GetMapping("/relatorio/{id}")
+	public ResponseEntity<RelatorioPedidoDTO> gerarRelatorioPedidoDTO(@PathVariable Long id) {
+		ItemPedido itemPedido = itemPedidoService.getItemPedidoPorId(id);
+		return new ResponseEntity<>(itemPedidoService.gerarRelatorioDTO(itemPedido), HttpStatus.OK);
 	}
 
 }
