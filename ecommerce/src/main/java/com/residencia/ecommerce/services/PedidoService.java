@@ -19,10 +19,10 @@ public class PedidoService {
 
 	@Autowired
 	PedidoRepository pedidoRepo;
-	
+
 	@Autowired
 	ProdutoRepository produtoRepo;
-	
+
 	@Autowired
 	EmailService emailService;
 
@@ -35,14 +35,34 @@ public class PedidoService {
 	}
 
 	public Pedido salvarPedido(Pedido pedido) {
+		// SALVA PEDIDO
 		Pedido pedidoSalvo = pedidoRepo.save(pedido);
+
+		// GERA RELATORIO
 		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
-		emailService.enviarEmail("Teste@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+
+		// ENVIA EMAIL
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
+				("Mensagem: " + pedidoDTO.toString()));
+
+		// RETORNA PEDIDO SALVO COMO RESPOSTA
 		return pedidoSalvo;
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
-		return pedidoRepo.save(pedido);
+		
+		// ATUALIZA PEDIDO
+		Pedido pedidoSalvo = pedidoRepo.save(pedido);
+
+		// GERA RELATORIO
+		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+
+		// ENVIA EMAIL
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
+				("Mensagem: " + pedidoDTO.toString()));
+
+		// RETORNA PEDIDO SALVO COMO RESPOSTA
+		return pedidoSalvo;
 	}
 
 	public boolean deletarPedido(Pedido pedido) {
@@ -69,27 +89,23 @@ public class PedidoService {
 
 		// CRIA LISTA RELAÇÃO DE ITENS DO PEDIDO VAZIA
 		List<ItemPedidoDTO> itensPedidosDTO = new ArrayList<>();
-		
-		// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
-		for (ItemPedido itemPedido : pedido.getItemPedidos()) {
-			
-			Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
-			
-			
-			// CRIA DTO ITEM PEDIDO
-			ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
-					itemPedido.getProduto().getIdProduto(),
-					produto.getNome(),
-					itemPedido.getPrecoVenda(),
-					itemPedido.getQuantidade(),
-					itemPedido.getValorBruto(),
-					itemPedido.getPercentualDesconto(), 
-					itemPedido.getValorLiquido());
-			
-			
 
-			// ADICIONA DTO A RELAÇÃO DE ITENS
-			itensPedidosDTO.add(itemPedidoDTO);
+		// VERIFICA SE PEDIDO CONTÉM ITENS
+		if (pedido.getItemPedidos() != null && pedido.getItemPedidos().size() > 0) {
+
+			// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
+			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
+
+				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
+
+				// CRIA DTO ITEM PEDIDO
+				ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(itemPedido.getProduto().getIdProduto(),
+						produto.getNome(), itemPedido.getPrecoVenda(), itemPedido.getQuantidade(),
+						itemPedido.getValorBruto(), itemPedido.getPercentualDesconto(), itemPedido.getValorLiquido());
+
+				// ADICIONA DTO A RELAÇÃO DE ITENS
+				itensPedidosDTO.add(itemPedidoDTO);
+			}
 		}
 
 		// RETORNA UM NOVO RELATORIO CONSTRUIDO A PARTIR DOS DADOS TRATADOS
