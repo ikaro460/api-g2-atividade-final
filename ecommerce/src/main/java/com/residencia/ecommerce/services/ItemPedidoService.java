@@ -53,11 +53,11 @@ public class ItemPedidoService {
 				itemPedido.getPercentualDesconto());
 		itemPedido.setValorLiquido(obterValorLiquido);
 		
-
+		Pedido pedido = (pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());
 		// SALVA O ITEM
 		ItemPedido itemSalvo = itemPedidoRepo.save(itemPedido);
 		
-		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());
+		pedido.setValorTotal(pedido.getValorTotal().add(itemSalvo.getValorLiquido()));
 		
 		// GERA RELATORIO
 		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(

@@ -37,6 +37,7 @@ public class PedidoService {
 
 	public Pedido salvarPedido(Pedido pedido) {
 		// SALVA PEDIDO
+		pedido.setValorTotal(new BigDecimal(0));
 		Pedido pedidoSalvo = pedidoRepo.save(pedido);
 
 		// GERA RELATORIO
