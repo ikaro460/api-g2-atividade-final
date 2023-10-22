@@ -36,7 +36,6 @@ public class ProdutoService {
 		try {
 			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			 
-			//editora.setImagem(arqImg.getBytes());
 			produto = objMapper.readValue(strProduto, Produto.class);
 		} catch(IOException e) {
 			System.out.println("Erro ao converter a string produto: " + e.toString());
