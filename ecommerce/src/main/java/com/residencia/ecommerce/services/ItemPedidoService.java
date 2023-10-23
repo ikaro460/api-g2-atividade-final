@@ -44,18 +44,17 @@ public class ItemPedidoService {
 	public ItemPedido salvarItemPedido(ItemPedido itemPedido) {
 
 		Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
-		
 
 		if (produto != null) {
 			itemPedido.setPrecoVenda(produto.getValorUnitario());
 			if (produto.getQtdEstoque() >= itemPedido.getQuantidade()) {
 				Integer qtd = produto.getQtdEstoque() - itemPedido.getQuantidade();
 				produto.setQtdEstoque(qtd);
-			}else {
+			} else {
 				System.out.println("nao tem estoque suficiente");
 				return null;
 			}
-		}	
+		}
 
 		// CRIA ITEM USANDO CONSTRUTOR
 		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), itemPedido.getQuantidade(),
@@ -74,7 +73,6 @@ public class ItemPedidoService {
 
 		// ENVIA EMAIL
 		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
-	
 
 		// ENVIA O ITEM SALVO COMO RESPOSTA
 		return itemSalvo;
@@ -82,11 +80,8 @@ public class ItemPedidoService {
 
 	public ItemPedido atualizarItemPedido(ItemPedido itemPedido) {
 		// CRIA ITEM USANDO CONSTRUTOR
-		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), 
-				itemPedido.getQuantidade(), 
-				itemPedido.getPrecoVenda(),
-				itemPedido.getPercentualDesconto(), 
-				itemPedido.getPedido(), 
+		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), itemPedido.getQuantidade(),
+				itemPedido.getPrecoVenda(), itemPedido.getPercentualDesconto(), itemPedido.getPedido(),
 				itemPedido.getProduto());
 
 		return itemPedidoRepo.save(itemSalvo);

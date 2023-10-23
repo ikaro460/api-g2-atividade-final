@@ -37,11 +37,8 @@ public class PedidoService {
 	}
 
 	public Pedido salvarPedido(Pedido pedido) {
-		// SALVA PEDIDO
-		Pedido pedidoSalvo = pedidoRepo.save(pedido);
-
-		// RETORNA PEDIDO SALVO COMO RESPOSTA
-		return pedidoSalvo;
+		// SALVA O PEDIDO
+		return pedidoRepo.save(pedido);
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
