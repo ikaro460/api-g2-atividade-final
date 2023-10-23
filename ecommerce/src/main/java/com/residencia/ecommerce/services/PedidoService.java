@@ -2,6 +2,7 @@ package com.residencia.ecommerce.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,28 +40,50 @@ public class PedidoService {
 		// SALVA PEDIDO
 		Pedido pedidoSalvo = pedidoRepo.save(pedido);
 
-		// GERA RELATORIO
-		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
-
-		// ENVIA EMAIL
-		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				("Mensagem: " + pedidoDTO.toString()));
-
 		// RETORNA PEDIDO SALVO COMO RESPOSTA
 		return pedidoSalvo;
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
 
-		// ATUALIZA PEDIDO
-		Pedido pedidoSalvo = pedidoRepo.save(pedido);
+		// CRIA PEDIDO QUE SERA SALVO
+		Pedido pedidoSalvo = pedido;
 
 		// GERA RELATORIO
-		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+		RelatorioPedidoDTO pedidoDTO;
 
-		// ENVIA EMAIL
-		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				("Mensagem: " + pedidoDTO.toString()));
+		// VERIFICA O STATUS DO PEDIDO
+		switch (pedido.getStatus().toUpperCase()) {
+		case "ENVIADO":
+
+			// ATUALIZA DATA DE ENVIO
+			pedidoSalvo.setDataEnvio(new Date());
+
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+
+			break;
+
+		case "ENTREGUE":
+
+			// ATUALIZA DATA DE ENTREGA
+			pedidoSalvo.setDataEntrega(new Date());
+
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+
+			// GERA RELATORIO
+			pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+
+			// ENVIA EMAIL
+			emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+			break;
+		default:
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+			break;
+
+		}
 
 		// RETORNA PEDIDO SALVO COMO RESPOSTA
 		return pedidoSalvo;
@@ -125,8 +148,7 @@ public class PedidoService {
 				valorTotal = valorTotal.add(itemPedido.getValorLiquido());
 			}
 			System.out.println("\n\n\n\n" + valorTotal + "\n\n\n\n\n\n");
-		}
-		else{
+		} else {
 			System.out.println("\n\n\n\nitem pedido e nulo\n\n\n\n\n");
 		}
 		pedido.setValorTotal(valorTotal);

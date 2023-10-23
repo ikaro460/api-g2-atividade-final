@@ -49,19 +49,16 @@ public class ItemPedido {
 	
 	
 	public ItemPedido() {
-		super();
 	}
 		
 
-	public ItemPedido(Long idItemPedido, Integer quantidade, BigDecimal precoVenda, BigDecimal percentualDesconto,
-			BigDecimal valorBruto, BigDecimal valorLiquido, Pedido pedido, Produto produto) {
-		super();
+	public ItemPedido(Long idItemPedido, Integer quantidade, BigDecimal precoVenda, BigDecimal percentualDesconto, Pedido pedido, Produto produto) {
 		this.idItemPedido = idItemPedido;
 		this.quantidade = quantidade;
 		this.precoVenda = precoVenda;
 		this.percentualDesconto = percentualDesconto;
-		this.valorBruto = valorBruto;
-		this.valorLiquido = valorLiquido;
+		this.valorBruto = precoVenda.multiply(BigDecimal.valueOf(quantidade)); // CALCULA O VALOR BRUTO
+		this.valorLiquido = valorBruto.subtract(valorBruto.multiply(percentualDesconto)); // CALCULA O VALOR LIQUIDO
 		this.pedido = pedido;
 		this.produto = produto;
 	}

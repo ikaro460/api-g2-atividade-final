@@ -1,6 +1,7 @@
 package com.residencia.ecommerce.entities;
 
-import java.sql.Date;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -41,21 +42,21 @@ public class Produto {
 	private Integer qtdEstoque;
 
 	@Column(name = "data_cadastro")
-	private Date dataCadastro;
+	private Date dataCadastro = new Date(); // DEFINE DATA NA CRIACAO DO PRODUTO
 
 	@Column(name = "valor_unitario", nullable = false)
-	private Integer valorUnitario;
+	private BigDecimal valorUnitario;
 
 	@Column(name = "imagem")
 	private byte[] imagem;
 
 	/* RELACIONAMENTOS */
-	
+
 	// PRODUTO > ITEM_PEDIDO
-	
+
 	@OneToMany(mappedBy = "produto")
 	private List<ItemPedido> itemPedidos;
-	
+
 	// PRODUTO > CATEGORIA
 	@ManyToOne
 	@JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria", nullable = false)
@@ -64,6 +65,23 @@ public class Produto {
 	public Long getIdProduto() {
 		return idProduto;
 	}
+
+	// CONSTRUTORES
+	public Produto() {
+	}
+
+	public Produto(Long idProduto, String nome, String descricao, Integer qtdEstoque, BigDecimal valorUnitario,
+			byte[] imagem, Categoria categoria) {
+		this.idProduto = idProduto;
+		this.nome = nome;
+		this.descricao = descricao;
+		this.qtdEstoque = qtdEstoque;
+		this.valorUnitario = valorUnitario;
+		this.imagem = imagem;
+		this.categoria = categoria;
+	}
+
+	// GETTERS E SETTERS
 
 	public void setIdProduto(Long idProduto) {
 		this.idProduto = idProduto;
@@ -101,11 +119,11 @@ public class Produto {
 		this.dataCadastro = dataCadastro;
 	}
 
-	public Integer getValorUnitario() {
+	public BigDecimal getValorUnitario() {
 		return valorUnitario;
 	}
 
-	public void setValorUnitario(Integer valorUnitario) {
+	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
 
@@ -132,7 +150,5 @@ public class Produto {
 	public void setItemPedidos(List<ItemPedido> itemPedidos) {
 		this.itemPedidos = itemPedidos;
 	}
-	
-	
 
 }
