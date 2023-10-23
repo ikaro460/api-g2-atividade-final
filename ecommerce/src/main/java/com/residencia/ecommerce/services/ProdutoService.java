@@ -29,21 +29,23 @@ public class ProdutoService {
 	public Produto salvarProduto(Produto produto) {
 		return produtoRepo.save(produto);
 	}
-	
+
 	public Produto salvarProduto(String strProduto, MultipartFile arqImg) throws IOException {
 		Produto produto = new Produto();
-		
+
 		try {
-			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			 
+			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+					false);
+
 			produto = objMapper.readValue(strProduto, Produto.class);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			System.out.println("Erro ao converter a string produto: " + e.toString());
 		}
 		produto.setImagem(arqImg.getBytes());
 		// fazer o @Lob com um array de bytes
-		
+
 		return produtoRepo.save(produto);
+
 	}
 
 	public Produto atualizarProduto(Produto produto) {

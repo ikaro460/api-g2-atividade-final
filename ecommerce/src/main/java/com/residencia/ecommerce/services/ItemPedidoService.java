@@ -1,6 +1,5 @@
 package com.residencia.ecommerce.services;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ItemPedidoService {
 
 	@Autowired
 	EmailService emailService;
-	
+
 	@Autowired
 	PedidoService pedidoService;
 
@@ -44,43 +43,49 @@ public class ItemPedidoService {
 
 	public ItemPedido salvarItemPedido(ItemPedido itemPedido) {
 
-		// CALCULA VALOR BRUTO
-		BigDecimal obterValorBruto = gerarValorBruto(itemPedido.getPrecoVenda(), itemPedido.getQuantidade());
-		itemPedido.setValorBruto(obterValorBruto);
+		Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
 
-		// CALCULA VALOR LIQUIDO
-		BigDecimal obterValorLiquido = gerarValorLiquido(itemPedido.getValorBruto(),
-				itemPedido.getPercentualDesconto());
-		itemPedido.setValorLiquido(obterValorLiquido);
-		
-		Pedido pedido = (pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());
+		if (produto != null) {
+			itemPedido.setPrecoVenda(produto.getValorUnitario());
+			if (produto.getQtdEstoque() >= itemPedido.getQuantidade()) {
+				Integer qtd = produto.getQtdEstoque() - itemPedido.getQuantidade();
+				produto.setQtdEstoque(qtd);
+			} else {
+				System.out.println("nao tem estoque suficiente");
+				return null;
+			}
+		}
+
+		// CRIA ITEM USANDO CONSTRUTOR
+		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), itemPedido.getQuantidade(),
+				itemPedido.getPrecoVenda(), itemPedido.getPercentualDesconto(), itemPedido.getPedido(),
+				itemPedido.getProduto());
+
 		// SALVA O ITEM
-		ItemPedido itemSalvo = itemPedidoRepo.save(itemPedido);
-		
-		pedido.setValorTotal(pedido.getValorTotal().add(itemSalvo.getValorLiquido()));
-		
+		itemPedidoRepo.save(itemSalvo);
+
+		// ATUALIZA O VALOR TOTAL DO PEDIDO REFERENTE AO ITEM
+		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
+
 		// GERA RELATORIO
 		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(
-				pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).get());
+				pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
 
 		// ENVIA EMAIL
-		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				(pedidoDTO.toString()));
+
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
 
 		// ENVIA O ITEM SALVO COMO RESPOSTA
 		return itemSalvo;
-
 	}
 
 	public ItemPedido atualizarItemPedido(ItemPedido itemPedido) {
-		BigDecimal obterValorBruto = gerarValorBruto(itemPedido.getPrecoVenda(), itemPedido.getQuantidade());
-		itemPedido.setValorBruto(obterValorBruto);
+		// CRIA ITEM USANDO CONSTRUTOR
+		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), itemPedido.getQuantidade(),
+				itemPedido.getPrecoVenda(), itemPedido.getPercentualDesconto(), itemPedido.getPedido(),
+				itemPedido.getProduto());
 
-		BigDecimal obterValorLiquido = gerarValorLiquido(itemPedido.getValorBruto(),
-				itemPedido.getPercentualDesconto());
-		itemPedido.setValorLiquido(obterValorLiquido);
-		return itemPedidoRepo.save(itemPedido);
-
+		return itemPedidoRepo.save(itemSalvo);
 	}
 
 	public boolean deletarItemPedido(ItemPedido itemPedido) {
@@ -96,14 +101,17 @@ public class ItemPedidoService {
 		// deleta itemPedido
 		itemPedidoRepo.delete(itemPedido);
 
-		// verifica se foi deletado de fato
+		// verifica se item foi deletado de fato
 		ItemPedido itemPedidoContinuaExistindo = getItemPedidoPorId(itemPedido.getIdItemPedido());
-		if (itemPedidoContinuaExistindo == null)
+		if (itemPedidoContinuaExistindo == null) {
+			// ATUALIZA O VALOR TOTAL DO PEDIDO REFERENTE AO ITEM
+			pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
 			return true;
+		}
 		return false;
 	}
 
-	// métodos valores bruto e liquido
+	// métodos auxiliares
 
 	private RelatorioPedidoDTO convertPedidoToDTO(Pedido pedido) {
 
@@ -129,24 +137,16 @@ public class ItemPedidoService {
 		}
 
 		// RETORNA UM NOVO RELATORIO CONSTRUIDO A PARTIR DOS DADOS TRATADOS
-		return new RelatorioPedidoDTO(pedido.getIdPedido(), pedido.getDataPedido(), pedido.getValorTotal(),
-				itensPedidosDTO);
+		RelatorioPedidoDTO relatorioFinalizado = new RelatorioPedidoDTO(pedido.getIdPedido(), pedido.getDataPedido(),
+				pedido.getValorTotal(), itensPedidosDTO);
+
+		System.out.println(relatorioFinalizado);
+
+		return relatorioFinalizado;
 	}
 
 	public RelatorioPedidoDTO gerarRelatorioDTO(Pedido pedido) {
 		return convertPedidoToDTO(pedido);
-	}
-
-	public BigDecimal gerarValorBruto(BigDecimal precoVenda, Integer quantidade) {
-		BigDecimal valorBruto = precoVenda.multiply(BigDecimal.valueOf(quantidade));
-		return valorBruto;
-//			valor bruto = precovenda * quantidade
-	}
-
-	public BigDecimal gerarValorLiquido(BigDecimal valorBruto, BigDecimal percentual) {
-		BigDecimal valorLiquido = valorBruto.subtract(valorBruto.multiply(percentual));
-		return valorLiquido;
-//			valor  liq = valor bruto - (valor bruto * percentual)		
 	}
 
 }
