@@ -102,9 +102,13 @@ public class ItemPedidoDTO {
 
 	@Override
 	public String toString() {
-		return "ItemPedidoDTO [idItemPedido=" + idItemPedido + ", nomeProduto=" + nomeProduto + ", precoVenda="
-				+ precoVenda + ", quantidade=" + quantidade + ", valorBruto=" + valorBruto + ", percentualDesconto="
-				+ percentualDesconto + ", valorLiquido=" + valorLiquido + "]";
+		return "Id do ItemPedido: " + idItemPedido + 
+				"\nNome do Produto: " + nomeProduto + 
+				"\nPreco da Venda: "+ precoVenda + 
+				"\nQuantidade: " + quantidade + 
+				"\nValor Bruto: " + valorBruto + 
+				"\nPorcentagem de Desconto: " + percentualDesconto + 
+				"\nValor Líquido: " + valorLiquido + "\n";
 	}
 	
 	

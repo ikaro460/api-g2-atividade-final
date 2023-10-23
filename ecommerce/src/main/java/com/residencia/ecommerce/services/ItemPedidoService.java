@@ -65,7 +65,7 @@ public class ItemPedidoService {
 
 		// ENVIA EMAIL
 		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				("Mensagem: " + pedidoDTO.toString()));
+				(pedidoDTO.toString()));
 
 		// ENVIA O ITEM SALVO COMO RESPOSTA
 		return itemSalvo;
