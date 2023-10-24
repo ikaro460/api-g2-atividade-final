@@ -31,6 +31,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 	
+	@ExceptionHandler(PropertyValueException.class)
+    ProblemDetail handlePropertyValueException(PropertyValueException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        
+        problemDetail.setTitle("Possui campos que não podem ser nulos");
+        problemDetail.setType(URI.create("https://api.biblioteca.com/errors/not-found"));
+        return problemDetail;
+    }
 	
 	@Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, 

@@ -17,46 +17,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.services.EnderecoService;
 
-	@RestController
-	@RequestMapping("/enderecos")
-	
-	public class EnderecoController {
+@RestController
+@RequestMapping("/enderecos")
 
-		@Autowired
-		EnderecoService enderecoService;
+public class EnderecoController {
 
-		@GetMapping
-		public ResponseEntity<List<Endereco>> listarEnderecos() {
-			return new ResponseEntity<>(enderecoService.listarEnderecos(), HttpStatus.OK);
-		}
+	@Autowired
+	EnderecoService enderecoService;
 
-		@GetMapping("/{id}")
-		public ResponseEntity<Endereco> buscarPorId(@PathVariable Long id) {
-			Endereco endereco = enderecoService.getEnderecoPorId(id);
-			
-			if(endereco == null)
-				return new ResponseEntity<>(endereco, HttpStatus.NOT_FOUND);
-			else
-				return new ResponseEntity<>(endereco, HttpStatus.OK);	
-		}
-
-		@PostMapping
-		public ResponseEntity<Endereco> salvar(@RequestBody Endereco endereco) {
-			return new ResponseEntity<>(enderecoService.salvarEndereco(endereco), HttpStatus.OK);
-		}
-
-		@PutMapping
-		public ResponseEntity<Endereco> atualizar(@RequestBody Endereco endereco) {
-			return new ResponseEntity<>(enderecoService.atualizarEndereco(endereco), HttpStatus.OK);
-		}
-
-		@DeleteMapping
-		public ResponseEntity<String> deletarEndereco(@RequestBody Endereco endereco) {
-			if (enderecoService.deletarEndereco(endereco)) {
-				return new ResponseEntity<>("Deletado com sucesso", HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>("Não foi possível deletar", HttpStatus.BAD_REQUEST);
-			}
-		}
-
+	@GetMapping
+	public ResponseEntity<List<Endereco>> listarEnderecos() {
+		return new ResponseEntity<>(enderecoService.listarEnderecos(), HttpStatus.OK);
 	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Endereco> buscarPorId(@PathVariable Long id) {
+		Endereco endereco = enderecoService.getEnderecoPorId(id);
+		return new ResponseEntity<>(endereco, HttpStatus.OK);
+	}
+
+	@PostMapping
+	public ResponseEntity<Endereco> salvar(@RequestBody Endereco endereco) {
+		return new ResponseEntity<>(enderecoService.salvarEndereco(endereco), HttpStatus.OK);
+	}
+
+	@PutMapping
+	public ResponseEntity<Endereco> atualizar(@RequestBody Endereco endereco) {
+		return new ResponseEntity<>(enderecoService.atualizarEndereco(endereco), HttpStatus.OK);
+	}
+
+	@DeleteMapping
+	public ResponseEntity<String> deletarEndereco(@RequestBody Endereco endereco) {
+		if (enderecoService.deletarEndereco(endereco)) {
+			return new ResponseEntity<>("Deletado com sucesso", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Não foi possível deletar", HttpStatus.BAD_REQUEST);
+		}
+	}
+
+}

@@ -35,11 +35,7 @@ public class ProdutoController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
 		Produto produto = produtoService.getProdutoPorId(id);
-		
-		if(produto == null)
-			return new ResponseEntity<>(produto, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(produto, HttpStatus.OK);	
+		return new ResponseEntity<>(produto, HttpStatus.OK);	
 	}
 
 	@PostMapping

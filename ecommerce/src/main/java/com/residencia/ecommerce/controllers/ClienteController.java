@@ -32,11 +32,7 @@ public class ClienteController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
 		Cliente cliente = clienteService.getClientePorId(id);
-		
-		if(cliente == null)
-			return new ResponseEntity<>(cliente, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(cliente, HttpStatus.OK);	
+		return new ResponseEntity<>(cliente, HttpStatus.OK);
 	}
 
 	@PostMapping

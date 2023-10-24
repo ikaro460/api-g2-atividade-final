@@ -12,6 +12,7 @@ import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.ItemPedidoRepository;
 import com.residencia.ecommerce.repositories.PedidoRepository;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
@@ -39,7 +40,7 @@ public class ItemPedidoService {
 	}
 
 	public ItemPedido getItemPedidoPorId(Long id) {
-		return itemPedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Item", id));
+		return itemPedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Item Pedido", id));
 	}
 
 	public ItemPedido salvarItemPedido(ItemPedido itemPedido) {
@@ -47,15 +48,17 @@ public class ItemPedidoService {
 		Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto())
 				.orElseThrow(() -> new NoSuchElementException("Produto", itemPedido.getProduto().getIdProduto()));
 
-		if (produto != null) {
+		if (produto != null || itemPedido.getQuantidade() != null || itemPedido.getPercentualDesconto() != null) {
 			itemPedido.setPrecoVenda(produto.getValorUnitario());
 			if (produto.getQtdEstoque() >= itemPedido.getQuantidade()) {
 				Integer qtd = produto.getQtdEstoque() - itemPedido.getQuantidade();
 				produto.setQtdEstoque(qtd);
 			} else {
-				System.out.println("nao tem estoque suficiente");
+				System.out.println("Nao tem estoque suficiente");
 				return null;
 			}
+		} else {
+			throw new PropertyValueException("produto");
 		}
 
 		// CRIA ITEM USANDO CONSTRUTOR
@@ -83,12 +86,27 @@ public class ItemPedidoService {
 	}
 
 	public ItemPedido atualizarItemPedido(ItemPedido itemPedido) {
+		if (itemPedido.getQuantidade() == null || itemPedido.getPercentualDesconto() == null) {
+			throw new PropertyValueException("Item Pedido");
+		}
 		// CRIA ITEM USANDO CONSTRUTOR
 		ItemPedido itemSalvo = new ItemPedido(itemPedido.getIdItemPedido(), itemPedido.getQuantidade(),
 				itemPedido.getPrecoVenda(), itemPedido.getPercentualDesconto(), itemPedido.getPedido(),
 				itemPedido.getProduto());
+		// SALVA O ITEM
+		itemPedidoRepo.save(itemSalvo);
 
-		return itemPedidoRepo.save(itemSalvo);
+		// ATUALIZA O VALOR TOTAL DO PEDIDO REFERENTE AO ITEM
+		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido())
+				.orElseThrow(() -> new NoSuchElementException("Pedido", itemPedido.getPedido().getIdPedido())));
+
+		// GERA RELATORIO
+		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoRepo.findById(itemPedido.getPedido().getIdPedido())
+				.orElseThrow(() -> new NoSuchElementException("Pedido", itemPedido.getPedido().getIdPedido())));
+
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+
+		return itemSalvo;
 	}
 
 	public boolean deletarItemPedido(ItemPedido itemPedido) {

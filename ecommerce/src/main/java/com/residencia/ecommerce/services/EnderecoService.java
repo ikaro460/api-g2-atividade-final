@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import com.residencia.ecommerce.dto.ViaCepResponse;
 import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.EnderecoRepository;
 
 @Service
@@ -23,7 +24,6 @@ public class EnderecoService {
 		RestTemplate restTemplate = new RestTemplate();
 		String viaCepUrl = VIA_CEP_URL + endereco.getCep() + "/json";
 		ViaCepResponse viaCepResponse = restTemplate.getForObject(viaCepUrl, ViaCepResponse.class);
-		
 		try {
 			endereco.setCep(viaCepResponse.getCep());
 			endereco.setRua(viaCepResponse.getLogradouro());
@@ -47,6 +47,9 @@ public class EnderecoService {
 	}
 
 	public Endereco salvarEndereco(Endereco enderecoCep) {
+		if(enderecoCep.getCep() == null) {
+			throw new PropertyValueException("Endereço");
+		}
 		Endereco endereco = getEnderecoByCep(enderecoCep);
 		return enderecoRepo.save(endereco);
 	}

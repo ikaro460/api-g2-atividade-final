@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
 
 @Service
@@ -27,18 +28,16 @@ public class ProdutoService {
 		return produtoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Produto", id));
 	}
 
-	public Produto salvarProduto(Produto produto) {
-		return produtoRepo.save(produto);
-	}
-
 	public Produto salvarProduto(String strProduto, MultipartFile arqImg) throws IOException {
 		Produto produto = new Produto();
-
 		try {
 			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 					false);
 
 			produto = objMapper.readValue(strProduto, Produto.class);
+			if(produto.getDescricao() == null || produto.getQtdEstoque() == null || produto.getValorUnitario() == null) {
+				throw new PropertyValueException("Produto");
+			}
 		} catch (IOException e) {
 			System.out.println("Erro ao converter a string produto: " + e.toString());
 		}
@@ -50,6 +49,9 @@ public class ProdutoService {
 	}
 
 	public Produto atualizarProduto(Produto produto) {
+		if(produto.getDescricao() == null || produto.getQtdEstoque() == null || produto.getValorUnitario() == null) {
+			throw new PropertyValueException("Produto");
+		}
 		return produtoRepo.save(produto);
 	}
 

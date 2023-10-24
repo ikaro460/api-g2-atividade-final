@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.residencia.ecommerce.entities.Cliente;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.ClienteRepository;
 
 @Service
@@ -23,10 +24,16 @@ public class ClienteService {
 	}
 
 	public Cliente salvarCliente (Cliente cliente) {
+		if (cliente.getEmail() == null || cliente.getCpf() == null || cliente.getEndereco() == null) {
+			throw new PropertyValueException("Cliente");
+		}
 		return clienteRepo.save(cliente);
 	}
 
 	public Cliente atualizarCliente(Cliente cliente) {
+		if (cliente.getEmail() == null || cliente.getCpf() == null || cliente.getEndereco() == null) {
+			throw new PropertyValueException("Cliente");
+		}
 		return clienteRepo.save(cliente);
 	}
 
