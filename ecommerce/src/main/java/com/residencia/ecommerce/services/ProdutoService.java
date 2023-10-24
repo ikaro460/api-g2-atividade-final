@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residencia.ecommerce.dto.ProdutoDTO;
 import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PSQLException;
 import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
 
@@ -50,6 +51,10 @@ public class ProdutoService {
 					false);
 
 			produto = objMapper.readValue(strProduto, Produto.class);
+			Produto produtoDescricao = produtoRepo.findByDescricao(produto.getDescricao());
+			if(produtoDescricao != null) {
+				throw new PSQLException("Produto", "Descricao");
+			}
 			if(produto.getDescricao() == null || produto.getQtdEstoque() == null || produto.getValorUnitario() == null) {
 				throw new PropertyValueException("Produto");
 			}

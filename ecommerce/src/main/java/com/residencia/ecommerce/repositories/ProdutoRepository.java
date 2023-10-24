@@ -6,4 +6,5 @@ import com.residencia.ecommerce.entities.Produto;
 
 public interface ProdutoRepository extends JpaRepository<Produto,Long>{
 
+	Produto findByDescricao(String descricao);
 }
