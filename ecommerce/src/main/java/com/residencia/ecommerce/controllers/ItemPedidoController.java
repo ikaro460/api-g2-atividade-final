@@ -32,11 +32,7 @@ public class ItemPedidoController {
 	@GetMapping("/{id}")
 	public ResponseEntity<ItemPedido> buscarItemPedidoPorId(@PathVariable Long id) {
 		ItemPedido itemPedido = itemPedidoService.getItemPedidoPorId(id);
-		if (itemPedido == null) {
-			return new ResponseEntity<>(itemPedido, HttpStatus.NOT_FOUND);
-		} else {
-			return new ResponseEntity<>(itemPedido, HttpStatus.OK);
-		}
+		return new ResponseEntity<>(itemPedido, HttpStatus.OK);
 	}
 
 	@PostMapping

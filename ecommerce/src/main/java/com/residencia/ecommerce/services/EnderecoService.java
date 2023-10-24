@@ -1,13 +1,18 @@
 package com.residencia.ecommerce.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.residencia.ecommerce.dto.EnderecoDTO;
 import com.residencia.ecommerce.dto.ViaCepResponse;
 import com.residencia.ecommerce.entities.Endereco;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.EnderecoRepository;
 
 @Service
@@ -15,39 +20,40 @@ public class EnderecoService {
 
 	@Autowired
 	EnderecoRepository enderecoRepo;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
 	private static final String VIA_CEP_URL = "https://viacep.com.br/ws/";
 
-	public Endereco getEnderecoByCep(Endereco endereco) {
-		RestTemplate restTemplate = new RestTemplate();
-		String viaCepUrl = VIA_CEP_URL + endereco.getCep() + "/json";
-		ViaCepResponse viaCepResponse = restTemplate.getForObject(viaCepUrl, ViaCepResponse.class);
+	public List<EnderecoDTO> listarEnderecos() {
+		List<Endereco> enderecos = enderecoRepo.findAll();
+		List<EnderecoDTO> enderecosDTO = new ArrayList<>();
 		
-		try {
-			endereco.setCep(viaCepResponse.getCep());
-			endereco.setRua(viaCepResponse.getLogradouro());
-			endereco.setBairro(viaCepResponse.getBairro());
-			endereco.setCidade(viaCepResponse.getLocalidade());
-			endereco.setComplemento(viaCepResponse.getComplemento());
-			endereco.setUf(viaCepResponse.getUf());
-		} catch(NullPointerException e) {
-			System.out.println("O cep deve ser válido. Mensagem: " + e.getMessage());
+		// CONVERTE ITENS DA LISTA EM DTO
+		for(Endereco endereco : enderecos) {
+			enderecosDTO.add(convertToDto(endereco));
 		}
 		
-		return endereco;
-	}
-
-	public List<Endereco> listarEnderecos() {
-		return enderecoRepo.findAll();
+		// RETORNA LISTA DE DTO
+		return enderecosDTO;
 	}
 
 	public Endereco getEnderecoPorId(Long id) {
-		return enderecoRepo.findById(id).orElse(null);
+		return enderecoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Endereco", id));
 	}
 
-	public Endereco salvarEndereco(Endereco enderecoCep) {
+	public EnderecoDTO salvarEndereco(Endereco enderecoCep) {
+		if (enderecoCep.getCep() == null) {
+			throw new PropertyValueException("Endereço");
+		}
 		Endereco endereco = getEnderecoByCep(enderecoCep);
-		return enderecoRepo.save(endereco);
+		
+		// SALVA O PRODUTO
+		enderecoRepo.save(endereco);
+		
+		// CONVERTE PRA DTO
+		return convertToDto(endereco);
 	}
 
 	public Endereco atualizarEndereco(Endereco endereco) {
@@ -73,5 +79,34 @@ public class EnderecoService {
 			return true;
 		return false;
 	}
+
+	// METEDOS AUXILIARES
+	
+	public Endereco getEnderecoByCep(Endereco endereco) {
+		RestTemplate restTemplate = new RestTemplate();
+		String viaCepUrl = VIA_CEP_URL + endereco.getCep() + "/json";
+		ViaCepResponse viaCepResponse = restTemplate.getForObject(viaCepUrl, ViaCepResponse.class);
+		try {
+			endereco.setCep(viaCepResponse.getCep());
+			endereco.setRua(viaCepResponse.getLogradouro());
+			endereco.setBairro(viaCepResponse.getBairro());
+			endereco.setCidade(viaCepResponse.getLocalidade());
+			endereco.setComplemento(viaCepResponse.getComplemento());
+			endereco.setUf(viaCepResponse.getUf());
+		} catch (NullPointerException e) {
+			System.out.println("O cep deve ser válido. Mensagem: " + e.getMessage());
+		}
+
+		return endereco;
+	}
+
+	private EnderecoDTO convertToDto(Endereco endereco) {
+		return modelMapper.map(endereco, EnderecoDTO.class);
+	}
+
+	/*
+	 * private Endereco convertToEntity(EnderecoDTO enderecoDto) { return
+	 * modelMapper.map(enderecoDto, Endereco.class); }
+	 */
 
 }

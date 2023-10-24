@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.residencia.ecommerce.dto.ProdutoDTO;
 import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.services.ProdutoService;
 
@@ -28,22 +29,18 @@ public class ProdutoController {
 	ProdutoService produtoService;
 
 	@GetMapping
-	public ResponseEntity<List<Produto>> listarProdutos() {
+	public ResponseEntity<List<ProdutoDTO>> listarProdutos() {
 		return new ResponseEntity<>(produtoService.listarProdutos(), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
 		Produto produto = produtoService.getProdutoPorId(id);
-		
-		if(produto == null)
-			return new ResponseEntity<>(produto, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(produto, HttpStatus.OK);	
+		return new ResponseEntity<>(produto, HttpStatus.OK);	
 	}
 
 	@PostMapping
-	public ResponseEntity<Produto> criarComFoto(@RequestPart("prod") String strProduto,
+	public ResponseEntity<ProdutoDTO> criarComFoto(@RequestPart("prod") String strProduto,
 			@RequestPart("img") MultipartFile arqImg) throws IOException {
 		return new ResponseEntity<>(produtoService.salvarProduto(strProduto, arqImg), HttpStatus.CREATED);
 	}

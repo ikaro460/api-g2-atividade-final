@@ -10,17 +10,11 @@ public class ItemPedidoDTO {
 	 */
 
 	private Long idItemPedido;
-
 	private String nomeProduto;
-
 	private BigDecimal precoVenda;
-
 	private Integer quantidade;
-
 	private BigDecimal valorBruto;
-
 	private BigDecimal percentualDesconto;
-
 	private BigDecimal valorLiquido;
 
 	// CONSTRUTORES
@@ -102,9 +96,14 @@ public class ItemPedidoDTO {
 
 	@Override
 	public String toString() {
-		return "ItemPedidoDTO [idItemPedido=" + idItemPedido + ", nomeProduto=" + nomeProduto + ", precoVenda="
-				+ precoVenda + ", quantidade=" + quantidade + ", valorBruto=" + valorBruto + ", percentualDesconto="
-				+ percentualDesconto + ", valorLiquido=" + valorLiquido + "]";
+		return "Id do ItemPedido: " + idItemPedido + 
+				"\nNome do Produto: " + nomeProduto + 
+				"\nPreco da Venda: "+ precoVenda + 
+				"\nQuantidade: " + quantidade + 
+				"\nValor Bruto: " + valorBruto + 
+				"\nPorcentagem de Desconto: " + percentualDesconto +
+				"\nValor Economizado: " + (valorBruto.multiply(percentualDesconto)) +
+				"\nValor Líquido: " + valorLiquido + "\n";
 	}
 	
 	

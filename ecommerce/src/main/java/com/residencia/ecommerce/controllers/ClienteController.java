@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.residencia.ecommerce.dto.ClienteDTO;
 import com.residencia.ecommerce.entities.Cliente;
 import com.residencia.ecommerce.services.ClienteService;
 
@@ -25,22 +26,18 @@ public class ClienteController {
 	ClienteService clienteService;
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> listarClientes() {
+	public ResponseEntity<List<ClienteDTO>> listarClientes() {
 		return new ResponseEntity<>(clienteService.listarClientes(), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
 		Cliente cliente = clienteService.getClientePorId(id);
-		
-		if(cliente == null)
-			return new ResponseEntity<>(cliente, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(cliente, HttpStatus.OK);	
+		return new ResponseEntity<>(cliente, HttpStatus.OK);
 	}
 
 	@PostMapping
-	public ResponseEntity<Cliente> salvar(@RequestBody Cliente cliente) {
+	public ResponseEntity<ClienteDTO> salvar(@RequestBody Cliente cliente) {
 		return new ResponseEntity<>(clienteService.salvarCliente(cliente), HttpStatus.OK);
 	}
 

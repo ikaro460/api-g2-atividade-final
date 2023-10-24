@@ -2,6 +2,7 @@ package com.residencia.ecommerce.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.entities.Produto;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.repositories.PedidoRepository;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
 
@@ -27,40 +29,77 @@ public class PedidoService {
 	@Autowired
 	EmailService emailService;
 
-	public List<Pedido> listarPedidos() {
-		return pedidoRepo.findAll();
+	public List<RelatorioPedidoDTO> listarPedidos() {
+		List<Pedido> pedidos = pedidoRepo.findAll();
+		List<RelatorioPedidoDTO> pedidosDTO = new ArrayList<>();
+		
+		// CONVERTE ITENS DA LISTA EM DTO
+		for(Pedido pedido : pedidos) {
+			pedidosDTO.add(convertPedidoToDTO(pedido));
+		}
+		
+		// RETORNA LISTA DE DTO
+		return pedidosDTO;
 	}
 
 	public Pedido getPedidoPorId(Long id) {
-		return pedidoRepo.findById(id).orElse(null);
+		return pedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Pedido", id));
 	}
 
-	public Pedido salvarPedido(Pedido pedido) {
-		// SALVA PEDIDO
+	public RelatorioPedidoDTO salvarPedido(Pedido pedido) {
+		// SALVA O PRODUTO
 		Pedido pedidoSalvo = pedidoRepo.save(pedido);
-
+		
 		// GERA RELATORIO
 		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
 
 		// ENVIA EMAIL
-		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				("Mensagem: " + pedidoDTO.toString()));
-
-		// RETORNA PEDIDO SALVO COMO RESPOSTA
-		return pedidoSalvo;
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+		
+		// RETORNA DTO
+		return pedidoDTO;
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
 
-		// ATUALIZA PEDIDO
-		Pedido pedidoSalvo = pedidoRepo.save(pedido);
+		// CRIA PEDIDO QUE SERA SALVO
+		Pedido pedidoSalvo = pedido;
 
 		// GERA RELATORIO
-		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+		RelatorioPedidoDTO pedidoDTO;
 
-		// ENVIA EMAIL
-		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.",
-				("Mensagem: " + pedidoDTO.toString()));
+		// VERIFICA O STATUS DO PEDIDO
+		switch (pedido.getStatus().toUpperCase()) {
+		case "ENVIADO":
+
+			// ATUALIZA DATA DE ENVIO
+			pedidoSalvo.setDataEnvio(new Date());
+
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+
+			break;
+
+		case "ENTREGUE":
+
+			// ATUALIZA DATA DE ENTREGA
+			pedidoSalvo.setDataEntrega(new Date());
+
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+
+			// GERA RELATORIO
+			pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+
+			// ENVIA EMAIL
+			emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+			break;
+		default:
+			// ATUALIZA PEDIDO
+			pedidoRepo.save(pedidoSalvo);
+			break;
+
+		}
 
 		// RETORNA PEDIDO SALVO COMO RESPOSTA
 		return pedidoSalvo;
@@ -97,8 +136,8 @@ public class PedidoService {
 			// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
 			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
 
-				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
-
+				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElseThrow(
+						() -> new NoSuchElementException("Produto", itemPedido.getProduto().getIdProduto()));
 				// CRIA DTO ITEM PEDIDO
 				ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(itemPedido.getProduto().getIdProduto(),
 						produto.getNome(), itemPedido.getPrecoVenda(), itemPedido.getQuantidade(),
@@ -125,8 +164,7 @@ public class PedidoService {
 				valorTotal = valorTotal.add(itemPedido.getValorLiquido());
 			}
 			System.out.println("\n\n\n\n" + valorTotal + "\n\n\n\n\n\n");
-		}
-		else{
+		} else {
 			System.out.println("\n\n\n\nitem pedido e nulo\n\n\n\n\n");
 		}
 		pedido.setValorTotal(valorTotal);

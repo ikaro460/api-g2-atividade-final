@@ -1,7 +1,6 @@
 package com.residencia.ecommerce.entities;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class Pedido {
 	private Long idPedido;
 	
 	@Column(name = "data_pedido")
-	private Date dataPedido;
+	private Date dataPedido = new Date(); // DEFINE A DATA NA CRIACAO DO PEDIDO
 	
 	@Column(name = "data_envio")
 	private Date dataEnvio;
@@ -53,6 +52,7 @@ public class Pedido {
 	// construtores
 	
 	public Pedido() {
+		/*
 		//data do pedido é gerada automaticamente na hora do computador
 		dataPedido = new Date();
 		
@@ -67,8 +67,26 @@ public class Pedido {
 	    calendar2.setTime(dataEnvio);
 	    calendar2.add(Calendar.DAY_OF_MONTH, 3);
 	    dataEntrega = calendar2.getTime();
+	    */
 	    
 	}
+	
+	
+	// calculo valor total
+	public void gerarValorTotal(Pedido pedido) {
+		BigDecimal valorTotal = new BigDecimal(0);
+		if (pedido.getItemPedidos() != null) {
+			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
+				valorTotal = valorTotal.add(itemPedido.getValorLiquido());
+			}
+			System.out.println("\n\n\n\n" + valorTotal + "\n\n\n\n\n\n");
+		}
+		else{
+			System.out.println("\n\n\n\nitem pedido e nulo\n\n\n\n\n");
+		}
+		pedido.setValorTotal(valorTotal);
+	}
+	
 	
 	// gets e sets
 	

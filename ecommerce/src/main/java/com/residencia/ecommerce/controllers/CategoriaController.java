@@ -32,11 +32,7 @@ public class CategoriaController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Categoria> buscarPorId(@PathVariable Long id) {
 		Categoria categoria = categoriaService.getCategoriaPorId(id);
-		
-		if(categoria == null)
-			return new ResponseEntity<>(categoria, HttpStatus.NOT_FOUND);
-		else
-			return new ResponseEntity<>(categoria, HttpStatus.OK);	
+		return new ResponseEntity<>(categoria, HttpStatus.OK);
 	}
 
 	@PostMapping

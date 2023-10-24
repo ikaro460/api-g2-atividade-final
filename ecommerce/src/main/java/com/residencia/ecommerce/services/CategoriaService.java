@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.residencia.ecommerce.entities.Categoria;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
+import com.residencia.ecommerce.exceptions.PropertyValueException;
 import com.residencia.ecommerce.repositories.CategoriaRepository;
 
 @Service
@@ -19,14 +21,20 @@ public class CategoriaService {
 	}
 
 	public Categoria getCategoriaPorId(Long id) {
-		return categoriaRepo.findById(id).orElse(null);
+		return categoriaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Categoria", id));
 	}
 
 	public Categoria salvarCategoria(Categoria categoria) {
+		if (categoria.getNome() == null || categoria.getDescricao() == null) {
+			throw new PropertyValueException("Categoria");
+		}
 		return categoriaRepo.save(categoria);
 	}
 
 	public Categoria atualizarCategoria(Categoria categoria) {
+		if (categoria.getNome() == null || categoria.getDescricao() == null) {
+			throw new PropertyValueException("Categoria");
+		}
 		return categoriaRepo.save(categoria);
 	}
 
