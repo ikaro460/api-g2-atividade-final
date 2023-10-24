@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.residencia.ecommerce.entities.Produto;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
 
 @Service
@@ -23,7 +24,7 @@ public class ProdutoService {
 	}
 
 	public Produto getProdutoPorId(Long id) {
-		return produtoRepo.findById(id).orElse(null);
+		return produtoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Produto", id));
 	}
 
 	public Produto salvarProduto(Produto produto) {

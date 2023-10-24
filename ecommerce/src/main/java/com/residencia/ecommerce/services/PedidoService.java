@@ -13,6 +13,7 @@ import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.entities.Produto;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.repositories.PedidoRepository;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
 
@@ -33,7 +34,7 @@ public class PedidoService {
 	}
 
 	public Pedido getPedidoPorId(Long id) {
-		return pedidoRepo.findById(id).orElse(null);
+		return pedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Pedido", id));
 	}
 
 	public Pedido salvarPedido(Pedido pedido) {
@@ -117,8 +118,8 @@ public class PedidoService {
 			// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
 			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
 
-				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
-
+				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElseThrow(
+						() -> new NoSuchElementException("Produto", itemPedido.getProduto().getIdProduto()));
 				// CRIA DTO ITEM PEDIDO
 				ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(itemPedido.getProduto().getIdProduto(),
 						produto.getNome(), itemPedido.getPrecoVenda(), itemPedido.getQuantidade(),

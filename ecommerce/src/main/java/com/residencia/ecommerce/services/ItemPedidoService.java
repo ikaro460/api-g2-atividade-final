@@ -11,6 +11,7 @@ import com.residencia.ecommerce.dto.RelatorioPedidoDTO;
 import com.residencia.ecommerce.entities.ItemPedido;
 import com.residencia.ecommerce.entities.Pedido;
 import com.residencia.ecommerce.entities.Produto;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.repositories.ItemPedidoRepository;
 import com.residencia.ecommerce.repositories.PedidoRepository;
 import com.residencia.ecommerce.repositories.ProdutoRepository;
@@ -38,12 +39,13 @@ public class ItemPedidoService {
 	}
 
 	public ItemPedido getItemPedidoPorId(Long id) {
-		return itemPedidoRepo.findById(id).orElse(null);
+		return itemPedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Item", id));
 	}
 
 	public ItemPedido salvarItemPedido(ItemPedido itemPedido) {
 
-		Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
+		Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto())
+				.orElseThrow(() -> new NoSuchElementException("Produto", itemPedido.getProduto().getIdProduto()));
 
 		if (produto != null) {
 			itemPedido.setPrecoVenda(produto.getValorUnitario());
@@ -65,11 +67,12 @@ public class ItemPedidoService {
 		itemPedidoRepo.save(itemSalvo);
 
 		// ATUALIZA O VALOR TOTAL DO PEDIDO REFERENTE AO ITEM
-		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
+		pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido())
+				.orElseThrow(() -> new NoSuchElementException("Pedido", itemPedido.getPedido().getIdPedido())));
 
 		// GERA RELATORIO
-		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(
-				pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
+		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoRepo.findById(itemPedido.getPedido().getIdPedido())
+				.orElseThrow(() -> new NoSuchElementException("Pedido", itemPedido.getPedido().getIdPedido())));
 
 		// ENVIA EMAIL
 
@@ -105,7 +108,8 @@ public class ItemPedidoService {
 		ItemPedido itemPedidoContinuaExistindo = getItemPedidoPorId(itemPedido.getIdItemPedido());
 		if (itemPedidoContinuaExistindo == null) {
 			// ATUALIZA O VALOR TOTAL DO PEDIDO REFERENTE AO ITEM
-			pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido()).orElse(null));
+			pedidoService.gerarValorTotal(pedidoRepo.findById(itemPedido.getPedido().getIdPedido())
+					.orElseThrow(() -> new NoSuchElementException("Pedido", itemPedido.getPedido().getIdPedido())));
 			return true;
 		}
 		return false;
@@ -124,7 +128,8 @@ public class ItemPedidoService {
 			// PREENCHE A RELAÇÃO DE ITENS COM OS ITENS DO PEDIDO
 			for (ItemPedido itemPedido : pedido.getItemPedidos()) {
 
-				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElse(null);
+				Produto produto = produtoRepo.findById(itemPedido.getProduto().getIdProduto()).orElseThrow(
+						() -> new NoSuchElementException("Produto", itemPedido.getProduto().getIdProduto()));
 
 				// CRIA DTO ITEM PEDIDO
 				ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(itemPedido.getProduto().getIdProduto(),

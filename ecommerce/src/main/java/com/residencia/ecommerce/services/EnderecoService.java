@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.residencia.ecommerce.dto.ViaCepResponse;
 import com.residencia.ecommerce.entities.Endereco;
+import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.repositories.EnderecoRepository;
 
 @Service
@@ -42,7 +43,7 @@ public class EnderecoService {
 	}
 
 	public Endereco getEnderecoPorId(Long id) {
-		return enderecoRepo.findById(id).orElse(null);
+		return enderecoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Endereco", id));
 	}
 
 	public Endereco salvarEndereco(Endereco enderecoCep) {
