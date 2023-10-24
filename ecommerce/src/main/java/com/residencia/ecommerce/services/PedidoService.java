@@ -48,10 +48,16 @@ public class PedidoService {
 
 	public RelatorioPedidoDTO salvarPedido(Pedido pedido) {
 		// SALVA O PRODUTO
-		pedidoRepo.save(pedido);
+		Pedido pedidoSalvo = pedidoRepo.save(pedido);
 		
-		// CONVERTE PRA DTO
-		return convertPedidoToDTO(pedido);
+		// GERA RELATORIO
+		RelatorioPedidoDTO pedidoDTO = gerarRelatorioDTO(pedidoSalvo);
+
+		// ENVIA EMAIL
+		emailService.enviarEmail("ikaro.gaspar1@gmail.com", "Assunto entrará aqui.", pedidoDTO.toString());
+		
+		// RETORNA DTO
+		return pedidoDTO;
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {

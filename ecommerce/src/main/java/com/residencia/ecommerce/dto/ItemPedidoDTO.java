@@ -10,17 +10,11 @@ public class ItemPedidoDTO {
 	 */
 
 	private Long idItemPedido;
-
 	private String nomeProduto;
-
 	private BigDecimal precoVenda;
-
 	private Integer quantidade;
-
 	private BigDecimal valorBruto;
-
 	private BigDecimal percentualDesconto;
-
 	private BigDecimal valorLiquido;
 
 	// CONSTRUTORES
@@ -107,7 +101,8 @@ public class ItemPedidoDTO {
 				"\nPreco da Venda: "+ precoVenda + 
 				"\nQuantidade: " + quantidade + 
 				"\nValor Bruto: " + valorBruto + 
-				"\nPorcentagem de Desconto: " + percentualDesconto + 
+				"\nPorcentagem de Desconto: " + percentualDesconto +
+				"\nValor Economizado: " + (valorBruto.multiply(percentualDesconto)) +
 				"\nValor Líquido: " + valorLiquido + "\n";
 	}
 	
