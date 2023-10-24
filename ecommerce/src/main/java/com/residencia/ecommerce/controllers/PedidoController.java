@@ -26,7 +26,7 @@ public class PedidoController {
 	PedidoService pedidoService;
 	
 	@GetMapping
-	public ResponseEntity<List<Pedido>> listarPedidos() {
+	public ResponseEntity<List<RelatorioPedidoDTO>> listarPedidos() {
 		return new ResponseEntity<>(pedidoService.listarPedidos(), HttpStatus.OK);
 	}
 	
@@ -47,7 +47,7 @@ public class PedidoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Pedido> salvar(@RequestBody Pedido pedido) {
+	public ResponseEntity<RelatorioPedidoDTO> salvar(@RequestBody Pedido pedido) {
 		return new ResponseEntity<>(pedidoService.salvarPedido(pedido), HttpStatus.CREATED);
 	}
 	

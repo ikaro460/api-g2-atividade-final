@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.residencia.ecommerce.dto.EnderecoDTO;
 import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.services.EnderecoService;
 
@@ -26,7 +27,7 @@ public class EnderecoController {
 	EnderecoService enderecoService;
 
 	@GetMapping
-	public ResponseEntity<List<Endereco>> listarEnderecos() {
+	public ResponseEntity<List<EnderecoDTO>> listarEnderecos() {
 		return new ResponseEntity<>(enderecoService.listarEnderecos(), HttpStatus.OK);
 	}
 
@@ -37,7 +38,7 @@ public class EnderecoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Endereco> salvar(@RequestBody Endereco endereco) {
+	public ResponseEntity<EnderecoDTO> salvar(@RequestBody Endereco endereco) {
 		return new ResponseEntity<>(enderecoService.salvarEndereco(endereco), HttpStatus.OK);
 	}
 

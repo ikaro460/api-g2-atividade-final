@@ -1,14 +1,17 @@
 package com.residencia.ecommerce.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.residencia.ecommerce.dto.ProdutoDTO;
 import com.residencia.ecommerce.entities.Produto;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
 import com.residencia.ecommerce.exceptions.PropertyValueException;
@@ -19,16 +22,28 @@ public class ProdutoService {
 
 	@Autowired
 	ProdutoRepository produtoRepo;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
-	public List<Produto> listarProdutos() {
-		return produtoRepo.findAll();
+	public List<ProdutoDTO> listarProdutos() {
+		List<Produto> produtos = produtoRepo.findAll();
+		List<ProdutoDTO> produtosDTO = new ArrayList<>();
+		
+		// CONVERTE ITENS DA LISTA EM DTO
+		for(Produto produto : produtos) {
+			produtosDTO.add(convertToDto(produto));
+		}
+		
+		// RETORNA LISTA DE DTO
+		return produtosDTO;
 	}
 
 	public Produto getProdutoPorId(Long id) {
 		return produtoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Produto", id));
 	}
 
-	public Produto salvarProduto(String strProduto, MultipartFile arqImg) throws IOException {
+	public ProdutoDTO salvarProduto(String strProduto, MultipartFile arqImg) throws IOException {
 		Produto produto = new Produto();
 		try {
 			ObjectMapper objMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
@@ -42,9 +57,15 @@ public class ProdutoService {
 			System.out.println("Erro ao converter a string produto: " + e.toString());
 		}
 		produto.setImagem(arqImg.getBytes());
-		// fazer o @Lob com um array de bytes
 
-		return produtoRepo.save(produto);
+		// SALVA O PRODUTO
+		produtoRepo.save(produto);
+		
+		// CONVERTE PRA DTO
+		ProdutoDTO produtoDTO = convertToDto(produto);
+		
+		// RETORNA DTO
+		return produtoDTO;
 
 	}
 
@@ -75,4 +96,16 @@ public class ProdutoService {
 		return false;
 	}
 
+	// METEDOS AUXILIARES
+	
+	private ProdutoDTO convertToDto(Produto produto) {
+		return modelMapper.map(produto, ProdutoDTO.class);
+	}
+
+	/*
+	private Produto convertToEntity(ProdutoDTO produtoDto) {
+		return modelMapper.map(produtoDto, Produto.class);
+	}
+	*/
+	
 }

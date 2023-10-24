@@ -1,10 +1,13 @@
 package com.residencia.ecommerce.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.residencia.ecommerce.dto.ClienteDTO;
 import com.residencia.ecommerce.entities.Cliente;
 import com.residencia.ecommerce.entities.Endereco;
 import com.residencia.ecommerce.exceptions.NoSuchElementException;
@@ -22,15 +25,28 @@ public class ClienteService {
 	@Autowired
 	EnderecoRepository enderecoRepo;
 
-	public List<Cliente> listarClientes() {
-		return clienteRepo.findAll();
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	public List<ClienteDTO> listarClientes() {
+		// CRIA LISTA DE CLIENTES E CLIENTES DTO.
+		List<Cliente> clientes = clienteRepo.findAll();
+		List<ClienteDTO> clientesDTO = new ArrayList<>();
+		
+		// CONVERTE ITENS DA LISTA EM DTO
+		for(Cliente cliente : clientes) {
+			clientesDTO.add(convertToDto(cliente));
+		}
+		
+		// RETORNA LISTA DE DTO
+		return clientesDTO;
 	}
 
 	public Cliente getClientePorId(Long id) {
 		return clienteRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Cliente", id));
 	}
 
-	public Cliente salvarCliente(Cliente cliente) {
+	public ClienteDTO salvarCliente(Cliente cliente) {
 		
 		Endereco endereco = enderecoRepo.findById(cliente.getEndereco().getIdEndereco())
 				.orElseThrow(() -> new NoSuchElementException("Endereco", cliente.getEndereco().getIdEndereco()));
@@ -54,7 +70,16 @@ public class ClienteService {
 		if (cliente.getEmail() == null || cliente.getCpf() == null || cliente.getEndereco() == null) {
 				throw new PropertyValueException("Cliente");
 			}
-		return clienteRepo.save(cliente);
+		
+		
+		// SALVA O PRODUTO
+		clienteRepo.save(cliente);
+		
+		// CONVERTE PRA DTO
+		ClienteDTO clienteDTO = convertToDto(cliente);
+		
+		// RETORNA DTO
+		return clienteDTO;
 	}
 
 	public Cliente atualizarCliente(Cliente cliente) {
@@ -81,4 +106,16 @@ public class ClienteService {
 		return false;
 	}
 
+	// METEDOS AUXILIARES
+	
+	private ClienteDTO convertToDto(Cliente cliente) {
+		return modelMapper.map(cliente, ClienteDTO.class);
+	}
+
+	/*
+	private Cliente convertToEntity(ClienteDTO clienteDto) {
+		return modelMapper.map(clienteDto, Cliente.class);
+	}
+	*/
+	
 }

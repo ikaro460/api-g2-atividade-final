@@ -29,17 +29,29 @@ public class PedidoService {
 	@Autowired
 	EmailService emailService;
 
-	public List<Pedido> listarPedidos() {
-		return pedidoRepo.findAll();
+	public List<RelatorioPedidoDTO> listarPedidos() {
+		List<Pedido> pedidos = pedidoRepo.findAll();
+		List<RelatorioPedidoDTO> pedidosDTO = new ArrayList<>();
+		
+		// CONVERTE ITENS DA LISTA EM DTO
+		for(Pedido pedido : pedidos) {
+			pedidosDTO.add(convertPedidoToDTO(pedido));
+		}
+		
+		// RETORNA LISTA DE DTO
+		return pedidosDTO;
 	}
 
 	public Pedido getPedidoPorId(Long id) {
 		return pedidoRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Pedido", id));
 	}
 
-	public Pedido salvarPedido(Pedido pedido) {
-		// SALVA O PEDIDO
-		return pedidoRepo.save(pedido);
+	public RelatorioPedidoDTO salvarPedido(Pedido pedido) {
+		// SALVA O PRODUTO
+		pedidoRepo.save(pedido);
+		
+		// CONVERTE PRA DTO
+		return convertPedidoToDTO(pedido);
 	}
 
 	public Pedido atualizarPedido(Pedido pedido) {
