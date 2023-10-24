@@ -31,6 +31,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 	
+	@ExceptionHandler(PSQLException.class)
+    ProblemDetail handlePSQLException(PSQLException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+        
+        problemDetail.setTitle("Possui campos únicos que não podem ser repetidos.");
+        problemDetail.setType(URI.create("https://api.biblioteca.com/errors/not-found"));
+        return problemDetail;
+    }
+	
 	@ExceptionHandler(PropertyValueException.class)
     ProblemDetail handlePropertyValueException(PropertyValueException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
